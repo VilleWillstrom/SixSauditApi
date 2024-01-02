@@ -1,0 +1,5 @@
+JWT_SECRET=randomstring
+JWT_TYPE=asymmetric
+SSL=1
+AUTH_TYPE=token
+CONNECTION_STRING=mysql+mysqlconnector://root@localhost/your_db_for_example

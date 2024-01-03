@@ -38,6 +38,7 @@ async def get_account(account: LoggedInUser):
 # version number is suggested to keep here, so there can be several versions running at same time
 @router.post('/register', response_model=UserRegisterRes)
 async def register(req: UserRegisterReq, service: AuthServ):
+    print('starting register at auth_controller')
     user = service.register(req)
     return {'username': user.email, 'firstName': user.firstName, 'lastName': user.lastName}
 

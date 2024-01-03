@@ -28,6 +28,7 @@ class AuthService(BaseService):
         # Thanks to SQL Alchemy there's no need to write SQL queries.
         self.db.add(user)  # makes an insert
         self.db.commit()  # commits an insert
+        print(user)
 
         return user
 

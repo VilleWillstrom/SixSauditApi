@@ -17,7 +17,7 @@ app = FastAPI()
 async def check_csrf(request: Request, call_next):
 
     if request.method in ['POST', 'PUT', 'PATCH', 'DELETE']:
-        if str(request.url).find('login') == -1 and str(request.url).find('register'):
+        if str(request.url).find('login') == -1 and str(request.url).find('register') == -1:
             # login and was not found if location is -1
             # Add or sentence for register
             try:

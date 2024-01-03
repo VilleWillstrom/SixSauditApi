@@ -13,17 +13,20 @@ Base = declarative_base()
 metadata = Base.metadata
 
 
-def connection_string():
+'''def connection_string():
     load_dotenv()
     cs = os.getenv('CONNECTION_STRING')
 
-    return cs
+    return cs'''
+
+connection_string = 'mysql+mysqlconnector://root@localhost/sixsaudit2'
 
 
-my_connection_string = connection_string()
+my_connection_string = connection_string
 print(my_connection_string)
 engine = create_engine(my_connection_string)
 SessionLocal = sessionmaker(autoflush=False, autocommit=False, bind=engine)
+Base.metadata.create_all(bind=engine)
 
 
 def get_db():
@@ -35,10 +38,6 @@ def get_db():
 
 
 Db = Annotated[Session, Depends(get_db)]
-
-
-# Creating type alias of original type get_db
-# Ensures that there are always open connection before sending reqs
 
 
 class Environmenttype(Base):

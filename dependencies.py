@@ -103,7 +103,7 @@ def require_admin(_token: Token, service: AuthServ, account_handler: AccountHand
                   access_token_cookie: Annotated[Optional[str], Cookie()] = None):
     user = account_handler.verify(_token, service, authorization, access_token_cookie, _cookie)
     if user.role != 'admin':
-        raise HTTPException(status_code=403, detail='forbidden')
+        raise HTTPException(status_code=403, detail='forbidden4')
     return user
 
 
@@ -114,7 +114,7 @@ def require_staff(_token: Token, service: AuthServ, account_handler: AccountHand
     user = account_handler.verify(_token, service, authorization, access_token_cookie, _cookie)
     if user.role == 'admin' or user.role == 'staff':
         return user
-    raise HTTPException(status_code=403, detail='forbidden')
+    raise HTTPException(status_code=403, detail='forbidden5')
 
 
 def get_refresh_token_user(_token: Token, service: AuthServ,

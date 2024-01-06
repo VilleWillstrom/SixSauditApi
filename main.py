@@ -7,7 +7,8 @@ from starlette.requests import Request
 from starlette.responses import JSONResponse
 
 import sixsaudit_token.token
-from controllers import auth_controller, environment_controller, inspection_form_controller, user_controller
+from controllers import (auth_controller, environment_controller, inspection_form_controller,
+                         inspection_type_controller, user_controller)
 from dotenv import load_dotenv
 import uvicorn
 
@@ -53,6 +54,7 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 app.include_router(auth_controller.router)
 app.include_router(environment_controller.router)
 app.include_router(inspection_form_controller.router)
+app.include_router(inspection_type_controller.router)
 app.include_router(user_controller.router)
 
 

@@ -22,22 +22,25 @@ LoginForm = Annotated[OAuth2PasswordRequestForm, Depends()]  # Has to be at leas
 
 @router.get('/account/admin', dependencies=[Depends(cookie)], response_model=UserAccountRes)
 async def get_admin(account: Admin):
+    # Get admin account details
     return account
 
 
 @router.get('/account/staff', dependencies=[Depends(cookie)], response_model=UserAccountRes)
 async def get_staff(account: Staff):
+    # Get staff account details
     return account
 
 
 @router.get('/account', dependencies=[Depends(cookie)], response_model=UserAccountRes)
 async def get_account(account: LoggedInUser):
+    # Get logged-in user account details
     return account
 
 
-# version number is suggested to keep here, so there can be several versions running at same time
 @router.post('/register', response_model=UserRegisterRes)
 async def register(req: UserRegisterReq, service: AuthServ):
+    # Register a new user
     print('starting register at auth_controller')
     user = service.register(req)
     return {'username': user.email, 'firstName': user.firstName, 'lastName': user.lastName}
@@ -46,6 +49,7 @@ async def register(req: UserRegisterReq, service: AuthServ):
 @router.post('/login')
 async def login(service: AuthServ, login_form: LoginForm, _token: sixsaudit_token.token.Token, res: Response,
                 res_handler: AuthRes):
+    # User login
     csrf = str(uuid.uuid4())
     tokens = service.login(login_form.username, login_form.password, csrf, _token)
     if tokens is None:
@@ -59,6 +63,7 @@ async def login(service: AuthServ, login_form: LoginForm, _token: sixsaudit_toke
 async def refresh(service: AuthServ, _token: sixsaudit_token.token.Token, res: Response,
                   refreshable_account: Annotated[models.User,
                   Depends(get_refresh_token_user)]):
+    # Refresh access token
     csrf = str(uuid.uuid4())
     tokens = service.refresh(refreshable_account, csrf, _token)
     res.set_cookie('access_token_cookie', tokens['access_token'], httponly=True, secure=True)
@@ -69,8 +74,7 @@ async def refresh(service: AuthServ, _token: sixsaudit_token.token.Token, res: R
 @router.post('/logout')
 async def logout(service: AuthServ, res: Response, session_id: Annotated[uuid.UUID, Depends(cookie)],
                  account: LoggedInUser, res_handler: AuthRes):
-    # Using annotated/type alias to dodge key order issue - making it non default parameter
-
+    # User logout
     service.logout(account.access_token_identifier)
     await res_handler.logout(session_id, res)
     return True

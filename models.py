@@ -13,18 +13,12 @@ Base = declarative_base()
 metadata = Base.metadata
 
 
-'''def connection_string():
+def connection_string():
     load_dotenv()
-    cs = os.getenv('CONNECTION_STRING')
-
-    return cs'''
-
-connection_string = 'mysql+mysqlconnector://root@localhost/sixsaudit2'
+    return os.getenv('CONNECTION_STRING')
 
 
-my_connection_string = connection_string
-print(my_connection_string)
-engine = create_engine(my_connection_string)
+engine = create_engine(connection_string())
 SessionLocal = sessionmaker(autoflush=False, autocommit=False, bind=engine)
 Base.metadata.create_all(bind=engine)
 

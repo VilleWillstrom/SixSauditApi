@@ -76,7 +76,6 @@ class User(Base):
     access_token_identifier = Column(String(45))
     refresh_token_identifier = Column(String(45))
 
-    # Next one is for unit testing comparison purposes, check services/test_services/test_user_service
     def __eq__(self, other):
         return type(self) == type(other)
 
@@ -117,35 +116,6 @@ t_userresponsibleenvironment = Table(
 )
 
 
-class File(Base):
-    __tablename__ = 'file'
-    id = Column(INTEGER, primary_key=True)
-    original_name = Column(String(255), nullable=False)
-    random_name = Column(String(255), nullable=False, index=True)
-    inspectionform_id = Column(ForeignKey('inspectionform.id'), nullable=False, index=True)
-
-    inspectionform = relationship('Inspectionform')  # Relationship is used to get relative data without Joins
-
-
-class Inspectionform(Base):
-    __tablename__ = 'inspectionform'
-
-    id = Column(INTEGER(11), primary_key=True)
-    createdAt = Column(DateTime, nullable=False)
-    closedAt = Column(DateTime)
-    user_id = Column(ForeignKey('user.id'), nullable=False, index=True)
-    environment_id = Column(ForeignKey('environment.id'), index=True)
-    inspectiontarget_id = Column(ForeignKey('inspectiontarget.id'), index=True)
-    inspectiontype_id = Column(ForeignKey('inspectiontype.id'), nullable=False, index=True)
-
-    environment = relationship('Environment')
-    inspectiontarget = relationship('Inspectiontarget')
-    inspectiontype = relationship('Inspectiontype')
-    user = relationship('User')
-
-    files = relationship('File', back_populates='inspectionform')
-
-
 class Instruction(Base):
     __tablename__ = 'instruction'
 
@@ -170,14 +140,87 @@ t_userresponsibletarget = Table(
 )
 
 
-class Inspectionresult(Base):
+class InspectionForm(Base):
+    __tablename__ = 'inspectionform'
+
+    id = Column(INTEGER(11), primary_key=True)
+    createdAt = Column(DateTime, nullable=False)
+    closedAt = Column(DateTime)
+    user_id = Column(ForeignKey('user.id'), nullable=False, index=True)
+    environment_id = Column(ForeignKey('environment.id'), index=True)
+    inspectiontarget_id = Column(ForeignKey('inspectiontarget.id'), index=True)
+    inspectiontype_id = Column(ForeignKey('inspectiontype.id'), nullable=False, index=True)
+
+    environment = relationship('Environment')
+    inspectiontarget = relationship('Inspectiontarget')
+    inspectiontype = relationship('Inspectiontype')
+    user = relationship('User')
+
+
+class InspectionResult(Base):
     __tablename__ = 'inspectionresult'
 
     id = Column(INTEGER(11), primary_key=True)
     createdAt = Column(DateTime, nullable=False)
-    value = Column(INTEGER(11), nullable=False)
-    note = Column(Text)
-    title = Column(Text, nullable=False)
+    inspectionform_id = Column(ForeignKey('inspectionform.id'), nullable=False, index=True)
+    user_id = Column(ForeignKey('user.id'), nullable=False, index=True)
+
+    inspectionform = relationship('InspectionForm')
+    user = relationship('User')
+
+
+class InspectionMultiChoiceQuestion(Base):
+    __tablename__ = 'inspection_multichoice_question'
+
+    id = Column(INTEGER(11), primary_key=True)
+    question_text = Column(Text, nullable=False)
+    answer_range = Column(INTEGER(11))
     inspectionform_id = Column(ForeignKey('inspectionform.id'), nullable=False, index=True)
 
-    inspectionform = relationship('Inspectionform')
+    inspectionform = relationship('InspectionForm')
+
+
+class InspectionMultichoiceResult(Base):
+    __tablename__ = 'inspection_multichoice_result'
+
+    id = Column(INTEGER(11), primary_key=True)
+    answer = Column(INTEGER(11), nullable=False)
+    inspectionresult_id = Column(ForeignKey('inspectionresult.id'), nullable=False, index=True)
+    inspection_multichoice_question_id = Column(ForeignKey('inspection_multichoice_question.id'), nullable=False, index=True)
+    feedback = Column(Text, nullable=True)
+
+    inspection_result = relationship('InspectionResult')
+    inspection_multichoice_question = relationship('InspectionMultiChoiceQuestion')
+    file = relationship('File')
+
+
+class InspectionQuestion(Base):
+    __tablename__ = 'inspection_question'
+
+    id = Column(INTEGER(11), primary_key=True)
+    question_text = Column(Text, nullable=False)
+    inspectionform_id = Column(ForeignKey('inspectionform.id'), nullable=False, index=True)
+
+    inspectionform = relationship('InspectionForm')
+
+
+class InspectionQuestionResult(Base):
+    __tablename__ = 'inspection_question_result'
+
+    id = Column(INTEGER(11), primary_key=True)
+    answer_text = Column(Text, nullable=True)
+    inspectionresult_id = Column(ForeignKey('inspectionresult.id'), nullable=False, index=True)
+    inspection_question_id = Column(ForeignKey('inspection_question.id'), nullable=False, index=True)
+
+    inspectionresult = relationship('InspectionResult')
+    inspection_question = relationship('InspectionQuestion')
+    file = relationship('File')
+
+
+class File(Base):
+    __tablename__ = 'file'
+    id = Column(INTEGER, primary_key=True)
+    original_name = Column(String(255), nullable=False)
+    random_name = Column(String(255), nullable=False, index=True)
+    inspection_question_result_id = Column(ForeignKey('inspection_question_result.id'), nullable=True, index=True)
+    inspection_multichoice_result_id = Column(ForeignKey('inspection_multichoice_result.id'), nullable=True, index=True)

@@ -5,6 +5,7 @@ from pydantic import BaseModel
 
 from dtos.environment import Environment
 from dtos.file import File
+from dtos.inspection_question import InspectionFormQuestion
 from dtos.inspection_type import InspectionType
 from dtos.target import Target
 from dtos.user import User
@@ -36,6 +37,16 @@ class Form(BaseModel):
     inspectiontarget: Optional[Target] = None
     inspectiontype: InspectionType
     files: List[File]
+    questions: List[InspectionFormQuestion]
+
+
+class InspectionFormCreateReq(BaseModel):
+    createdAt: datetime.datetime
+    closedAt: Optional[datetime.datetime] = None
+    user_id: int
+    environment_id: int
+    inspectiontarget_id: int
+    inspetiontype_id: int
 
 
 class FormRes(BaseModel):

@@ -17,6 +17,11 @@ class InspectionTargetService(BaseService):
         inspection_targets = self.db.query(models.Inspectiontarget).all()
         return inspection_targets
 
+    def get_all_inspection_targets_by_environment_id(self, environment_id):
+        # Get all inspection targets that are related to specific environment from the database
+        inspetion_targets = self.db.query(models.Inspectiontarget).filter(models.Inspectiontarget.environment_id == environment_id).all()
+        return inspetion_targets
+
     def get_inspection_target_by_id(self, _id):
         # Get inspection target by ID from the database
         inspection_target = self.db.query(models.Inspectiontarget).get(_id)

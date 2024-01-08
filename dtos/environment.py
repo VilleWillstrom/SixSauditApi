@@ -20,4 +20,4 @@ class EnvironmentCreateReq(BaseModel):
     name: str
     description: str
     location_id: int
-    environment_type_id: int
+    environmenttype_id: int

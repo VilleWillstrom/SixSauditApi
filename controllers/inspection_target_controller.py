@@ -8,7 +8,7 @@ from dtos.target import InspectionTargetCreateReq
 
 router = APIRouter(
     prefix='/api/v1/inspection_target',
-    tags=['inspection target']
+    tags=['Inspection target']
 )
 
 
@@ -34,6 +34,12 @@ async def get_inspection_targets(service: InspectionTargetServ):
     inspection_targets = service.get_all_inspection_targets()
     return inspection_targets
 
+
+@router.get('/all/{environment_id}')
+async def get_inspection_targets_by_environment(environment_id: int, service: InspectionTargetServ):
+    # Read operation (get all by environment): Retrieves all inspection targets related to specific environment
+    inspection_targets = service.get_all_inspection_targets_by_environment_id(environment_id)
+    return inspection_targets
 
 @router.get('/{inspection_target_id}')
 async def get_inspection_target_by_id(inspection_target_id: int, service: InspectionTargetServ):
